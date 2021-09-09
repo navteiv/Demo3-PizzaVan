@@ -255,11 +255,11 @@
     <Content Include="Scripts\jquery-3.4.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Week 6\MVCApplication\BusinessLogic\BusinessLogic.csproj">
+    <ProjectReference Include="..\BusinessLogic\BusinessLogic.csproj">
       <Project>{008208f9-473c-4a32-89bc-c128131ff599}</Project>
       <Name>BusinessLogic</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Week 6\MVCApplication\DataAccess\DataAccess.csproj">
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
       <Project>{3262af61-3365-41c9-b84a-f923573bfcf4}</Project>
       <Name>DataAccess</Name>
     </ProjectReference>
