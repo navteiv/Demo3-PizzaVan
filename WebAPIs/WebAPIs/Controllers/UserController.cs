@@ -23,7 +23,7 @@ namespace WebAPIs.Controllers
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            return "value";
+            return "Nguyen Viet Van test API";
         }
 
         // POST api/<UserController>
