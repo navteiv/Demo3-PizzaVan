@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BusinessLogic.BUS;
+using DataAccess.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +14,17 @@ namespace WebAPIs.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
+        private readonly IUserBUS _userBUS;
+        public UserController(IUserBUS userBUS)
+        {
+            _userBUS = userBUS;
+        }
         // GET: api/<UserController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public async Task<ActionResult<IEnumerable<User>>> GetUser([FromQuery] int id)
         {
-            return new string[] { "value1", "value2" };
+            var user = await _userBUS.GetAllUsersAsync();
+            return user;
         }
 
         // GET api/<UserController>/5
