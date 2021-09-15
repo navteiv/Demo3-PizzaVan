@@ -12,13 +12,14 @@ namespace BusinessLogic.BUS
 {
     public interface IUserBUS
     {
+        Task<User> LoginAsync(ViewLogin view);
         List<User> GetAllUsers();
         Task<List<User>> GetAllUsersAsync();
         User GetUser(int id);
         int AddUser(User user);
         int EditUser(int id, User user);
 
-        public User Login(ViewLogin viewLogin);
+        User Login(ViewLogin viewLogin);
     }
     public class UserBUS : IUserBUS
     {
@@ -91,12 +92,23 @@ namespace BusinessLogic.BUS
                 .FirstOrDefault();
             return u;
         }
-
+        public async Task<User> LoginAsync(ViewLogin view)
+        {
+            var u = await _context.Users.Where(
+                          p => p.UserName.Equals(view.UserName)
+                          && p.Password.Equals(_encryptHelper.MD5Encrypt(view.Password))
+                         ).FirstOrDefaultAsync();
+            return u;
+        }
         public async Task<List<User>> GetAllUsersAsync()
         {
             List<User> list = new List<User>();
             list = await _context.Users.ToListAsync();
             return list;
         }
+
+       
+
+       
     }
 }
