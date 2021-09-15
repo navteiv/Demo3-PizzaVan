@@ -6,11 +6,12 @@ import { MainComponent } from './main.component';
 const mainRoutes: Routes = [
   {
     path: '', component: MainComponent, children: [
-      {path:'', redirectTo: 'user', pathMatch: 'full'},
+      {path:'', redirectTo: 'home', pathMatch: 'full'},
       {path:'customer', loadChildren: () => import('./customer/customer.module').then(m => m.CustomerModule)},
       {path: 'user', loadChildren: () => import('./user/user.module').then(m => m.UserModule)},
       {path: 'dish', loadChildren: () => import('./dish/dish.module').then(m => m.DishModule)},
-      {path: 'order', loadChildren: () => import('./order/order.module').then(m => m.OrderModule)}
+      {path: 'order', loadChildren: () => import('./order/order.module').then(m => m.OrderModule)},
+      {path: 'home', loadChildren: () => import('./home/home.module').then(m => m.HomeModule)}
     ]
   }
 ];
