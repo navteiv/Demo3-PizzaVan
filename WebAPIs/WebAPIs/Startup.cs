@@ -77,6 +77,8 @@ namespace WebAPIs
             services.AddTransient<IUploadHelper, UploadHelper>();
             services.AddTransient<IEncryptHelper, EncryptHelper>();
             services.AddTransient<IUserBUS, UserBUS>();
+            services.AddTransient<ICustomerBUS, CustomerBUS>();
+            services.AddTransient<IDishBUS, DishBUS>();
             services.AddCors(options => options.AddPolicy(
                  "_mypolicy", builder => builder
                  .AllowAnyOrigin()
@@ -94,7 +96,7 @@ namespace WebAPIs
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ASM.API v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
 
             app.UseHttpsRedirection();

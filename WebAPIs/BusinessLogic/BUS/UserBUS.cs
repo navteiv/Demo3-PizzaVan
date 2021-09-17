@@ -17,7 +17,9 @@ namespace BusinessLogic.BUS
         Task<List<User>> GetAllUsersAsync();
         User GetUser(int id);
         int AddUser(User user);
+        Task<int> AddUserAsync(User user);
         int EditUser(int id, User user);
+        Task<int> EditUserAsync(int id, User user);
 
         User Login(ViewLogin viewLogin);
     }
@@ -50,6 +52,19 @@ namespace BusinessLogic.BUS
                 user.Password = _encryptHelper.MD5Encrypt(user.Password);
                 _context.Add(user);
                 _context.SaveChanges();
+                value = user.UserId;
+            }
+            catch (Exception) { value = 0; }
+            return value;
+        }
+        public async Task<int> AddUserAsync(User user)
+        {
+            int value = 0;
+            try
+            {
+                user.Password = _encryptHelper.MD5Encrypt(user.Password);
+                _context.Add(user);
+                await _context.SaveChangesAsync();
                 value = user.UserId;
             }
             catch (Exception) { value = 0; }
@@ -107,8 +122,34 @@ namespace BusinessLogic.BUS
             return list;
         }
 
-       
+        public async Task<int> EditUserAsync(int id, User user)
+        {
+            int value = 0;
+            try
+            {
+                User _user = null;
+                _user = _context.Users.Find(id);
 
-       
+                _user.UserName = user.UserName;
+                _user.FullName = user.FullName;
+                _user.Title = user.Title;
+                _user.DOB = user.DOB;
+                _user.Email = user.Email;
+                _user.Admin = user.Admin;
+                _user.Locked = user.Locked;
+                if (user.Password != null)
+                {
+                    user.Password = _encryptHelper.MD5Encrypt(user.Password);
+                    _user.Password = user.Password;
+                    _user.ConfirmPassword = user.Password;
+                }
+                _context.Update(_user);
+                await _context.SaveChangesAsync();
+
+                value = user.UserId;
+            }
+            catch (Exception) { value = 0; }
+            return value;
+        }
     }
 }

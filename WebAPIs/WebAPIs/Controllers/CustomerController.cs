@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BusinessLogic.BUS;
+using DataAccess.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -7,81 +10,45 @@ using System.Threading.Tasks;
 
 namespace WebAPIs.Controllers
 {
-    public class CustomerController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CustomerController : ControllerBase
     {
-        // GET: CustomerController
-        public ActionResult Index()
+        private readonly ICustomerBUS _customerBUS;
+        public CustomerController(ICustomerBUS customerBUS)
         {
-            return View();
+            _customerBUS = customerBUS;
         }
-
-        // GET: CustomerController/Details/5
-        public ActionResult Details(int id)
+        [HttpGet]
+        public async Task<ActionResult<Customer>> GetCustomer([FromQuery] int id)
         {
-            return View();
+            Customer customer = await _customerBUS.GetCustomerAsync(id);
+            return customer;
         }
-
-        // GET: CustomerController/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: CustomerController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult<int>> PostCustomer(Customer customer)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                int id = await _customerBUS.AddCustomerAsync(customer);
+                customer.CustomerId = id;
             }
-            catch
-            {
-                return View();
-            }
+            catch (Exception){}
+            return Ok(1);
         }
-
-        // GET: CustomerController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: CustomerController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<ActionResult<int>> EditCustomer(int id, Customer customer)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                await _customerBUS.EditCustomerAsync(id, customer);
             }
-            catch
+            catch (Exception)
             {
-                return View();
+                return BadRequest();
             }
-        }
-
-        // GET: CustomerController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: CustomerController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            return Ok(1);
         }
     }
 }
