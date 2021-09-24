@@ -26,28 +26,14 @@ namespace WebAPIs.Controllers
             _userBUS = userBUS;
             _configuration = configuration;
         }
-        // GET: api/<TokenController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/<TokenController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
         // POST api/<TokenController>
         [HttpPost, Route("login")]
-        public async Task<IActionResult> Login(ViewLogin viewLogin)
+        public IActionResult Login(ViewLogin viewLogin)
         {
             List<ViewToken> list = new List<ViewToken>();
             if (viewLogin != null && !string.IsNullOrEmpty(viewLogin.UserName) && !string.IsNullOrEmpty(viewLogin.Password))
             {
-                var user = await _userBUS.LoginAsync(viewLogin);
+                var user =  _userBUS.Login(viewLogin);
                 if (user != null)
                 {
                     if (user != null)
@@ -69,12 +55,13 @@ namespace WebAPIs.Controllers
                         ViewToken viewToken = new ViewToken()
                         {
                             Token = new JwtSecurityTokenHandler().WriteToken(token),
-                            Id = user.UserId
+                            Id = user.UserId,
+                            FullName = user.FullName
                         };
 
                         list.Add(viewToken);
                         //return list;
-                        return Ok(new { viewToken.Token });
+                        return Ok(new { viewToken.Token, viewToken.FullName });
                     }
                     else
                     {
@@ -90,19 +77,6 @@ namespace WebAPIs.Controllers
             }
             //return list;
             return BadRequest();
-        }
-
-
-        // PUT api/<TokenController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<TokenController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

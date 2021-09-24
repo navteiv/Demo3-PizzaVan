@@ -10,7 +10,6 @@ namespace BusinessLogic.BUS
 {
     public interface IDishBUS
     {
-        Task<List<Dish>> GetMonAnAllAsync();
         List<Dish> GetAllDishes();
 
         Dish GetDish(int id);
@@ -77,12 +76,6 @@ namespace BusinessLogic.BUS
             }
             catch (Exception) { value = 0; }
             return value;
-        }
-
-        public async Task<List<Dish>> GetMonAnAllAsync()
-        {
-            List<Dish> list = await _context.Dishes.ToListAsync();
-            return list;
-        }
+        }   
     }
 }

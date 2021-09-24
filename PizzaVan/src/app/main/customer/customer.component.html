@@ -1,1 +1,73 @@
-<p>customer works!</p>
+<div class="container-fluid">
+  <kendo-grid
+    [data]="gridView"
+    [navigable]="true"
+    [sortable]="{
+      allowUnsort: false
+    }"
+    [sort]="sort"
+    (sortChange)="sortChange($event)"
+    [skip]='skip'
+    [pageable] = "{
+      buttonCount: buttonCount,
+      info: info,
+      type: 'numeric',
+      previousNext: previousNext,
+      position: 'bottom'
+    }"
+    [pageSize]='pageSize'
+    (pageChange)="pageChange($event)"
+  >
+  <ng-template kendoGridToolbarTemplate>
+    <button kendoGridPDFCommand icon="file-pdf" [primary]="true">Export to PDF</button>
+    <button type="button" kendoGridExcelCommand icon="file-excel" >
+      Export to Excel
+    </button>
+  </ng-template>
+    <kendo-grid-column field="customerId" title="ID" [width]="50">
+    </kendo-grid-column>
+    <kendo-grid-column field="email" title="Email" [width]="200">
+    </kendo-grid-column>
+    <kendo-grid-column field="fullName" title="Họ tên">
+    </kendo-grid-column>
+    <kendo-grid-column field="doB" title="Ngày sinh" [width]="200">
+    </kendo-grid-column>
+    <kendo-grid-column field="address" title="Địa chỉ" [width]="400">
+    </kendo-grid-column>
+    <kendo-grid-column field="phoneNumber" title="Số điện thoại" [width]="120">
+    </kendo-grid-column>
+    <!-- <kendo-grid-column field="locked" title="Đã khóa" [width]="120">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        <input type="checkbox" [checked]="dataItem.locked" disabled />
+      </ng-template>
+    </kendo-grid-column> -->
+    <kendo-grid-pdf
+    fileName="CustomerList.pdf"
+    [allPages]="true"
+    paperSize="A4"
+    [repeatHeaders]="true"
+    [landscape]="true"
+    >
+    <kendo-grid-pdf-margin
+      top="2cm"
+      left="1cm"
+      right="1cm"
+      bottom="2cm"
+    ></kendo-grid-pdf-margin>
+    <ng-template
+      kendoGridPDFTemplate
+      let-pageNum="pageNum"
+      let-totalPages="totalPages"
+      >
+      <div class="page-template">
+        <div class="header">
+          <div style="float: right">
+            Page {{ pageNum }} of {{ totalPages }}
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </kendo-grid-pdf>
+  <kendo-grid-excel fileName="CustomerList.xlsx" [fetchData]="allData"></kendo-grid-excel>
+</kendo-grid>
+</div>

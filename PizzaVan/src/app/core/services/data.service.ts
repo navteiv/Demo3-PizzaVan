@@ -11,30 +11,46 @@ import { map } from 'rxjs/operators';
 })
 export class DataService {
   private headers!: HttpHeaders;
-  constructor(private router: Router, private http: HttpClient, private authen: AuthenticateService) {}
+  constructor(private router: Router, private http: HttpClient, private authen: AuthenticateService) {
+    this.headers = new HttpHeaders();
+    // this.headers.append('Content-Type', 'application/json');
+  }
 
   get(uri: string) {
     this.headers.delete("Authorization");
     this.headers.append("Authorization", "Bearer" + localStorage.getItem("jwt"));
     return this.http.get(SystemConstants.LOCAL_API + uri, {headers: this.headers})
-    .pipe(map((response: any) => response.json()));
+    .pipe(map((response: any) => response));
   }
   post(uri: string, data?: any) {
-    this.headers.delete("Authorization");
-    this.headers.append("Authorization", "Bearer" + localStorage.getItem("jwt"));
-    return this.http.post(SystemConstants.LOCAL_API + uri, data, {headers: this.headers})
-    .pipe(map((response: any) => response.json()));
+    // this.headers.delete("Authorization");
+    // this.headers.append("Authorization", "Bearer" + localStorage.getItem("jwt"));
+    const httpOptions = {
+      authorization: new HttpHeaders({'Authorization' : 'Bearer' + localStorage.getItem("jwt")}),
+      headers: new HttpHeaders({'Content-Type': 'application/json'})
+    }
+    return this.http.post(SystemConstants.LOCAL_API + uri, data, httpOptions)
+    .pipe(map((response: any) => response));
   }
   put(uri: string, data?: any) {
     this.headers.delete("Authorization");
     this.headers.append("Authorization", "Bearer" + localStorage.getItem("jwt"));
     return this.http.put(SystemConstants.LOCAL_API + uri, data, {headers: this.headers})
-    .pipe(map((response: any) => response.json()));
+    .pipe(map((response: any) => response));
   }
   delete(uri: string, key: string, id: number) {
     this.headers.delete("Authorization");
     this.headers.append("Authorization", "Bearer" + localStorage.getItem("jwt"));
     return this.http.delete(SystemConstants.LOCAL_API + uri + "/?" + key + "=" + id, {headers: this.headers})
-    .pipe(map((response: any) => response.json()));
+    .pipe(map((response: any) => response));
+  }
+  public handleError(error: any){
+    if(error.status == 401){
+      localStorage.removeItem("jwt");
+      alert("Mời bạn đăng nhập lại");
+      this.router.navigate(["/main"]);
+    }else{
+
+    }
   }
 }

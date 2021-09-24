@@ -13,5 +13,6 @@ namespace DataAccess.Models.ViewModels
         public int Id { get; set; }
 
         //public string ReturnUrl { get; set; }
+        public string FullName { get; set; }
     }
 }

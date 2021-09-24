@@ -30,12 +30,21 @@ namespace WebAPIs.Controllers
         }
         // GET: api/<UserController>
         [HttpGet]
-        [Authorize]
-        public async Task<ActionResult<IEnumerable<User>>> GetUser()
+        public ActionResult<IEnumerable<User>> GetUser()
         {
-            var user = await _userBUS.GetAllUsersAsync();
+            var user =  _userBUS.GetAllUsers();
             return user;
         }
-
+        [HttpPost]
+        public ActionResult<int> PostUser(User user)
+        {
+            try
+            {
+                int id = _userBUS.AddUser(user);
+                user.UserId = id;
+            }
+            catch (Exception){}
+            return Ok(1);
+        }
     }
 }

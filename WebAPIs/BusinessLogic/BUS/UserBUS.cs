@@ -12,15 +12,10 @@ namespace BusinessLogic.BUS
 {
     public interface IUserBUS
     {
-        Task<User> LoginAsync(ViewLogin view);
         List<User> GetAllUsers();
-        Task<List<User>> GetAllUsersAsync();
         User GetUser(int id);
         int AddUser(User user);
-        Task<int> AddUserAsync(User user);
         int EditUser(int id, User user);
-        Task<int> EditUserAsync(int id, User user);
-
         User Login(ViewLogin viewLogin);
     }
     public class UserBUS : IUserBUS
@@ -57,19 +52,7 @@ namespace BusinessLogic.BUS
             catch (Exception) { value = 0; }
             return value;
         }
-        public async Task<int> AddUserAsync(User user)
-        {
-            int value = 0;
-            try
-            {
-                user.Password = _encryptHelper.MD5Encrypt(user.Password);
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                value = user.UserId;
-            }
-            catch (Exception) { value = 0; }
-            return value;
-        }
+        
         public int EditUser(int id, User user)
         {
             int value = 0;
@@ -106,50 +89,6 @@ namespace BusinessLogic.BUS
                      p.Password.Equals(_encryptHelper.MD5Encrypt(viewLogin.Password)))
                 .FirstOrDefault();
             return u;
-        }
-        public async Task<User> LoginAsync(ViewLogin view)
-        {
-            var u = await _context.Users.Where(
-                          p => p.UserName.Equals(view.UserName)
-                          && p.Password.Equals(_encryptHelper.MD5Encrypt(view.Password))
-                         ).FirstOrDefaultAsync();
-            return u;
-        }
-        public async Task<List<User>> GetAllUsersAsync()
-        {
-            List<User> list = new List<User>();
-            list = await _context.Users.ToListAsync();
-            return list;
-        }
-
-        public async Task<int> EditUserAsync(int id, User user)
-        {
-            int value = 0;
-            try
-            {
-                User _user = null;
-                _user = _context.Users.Find(id);
-
-                _user.UserName = user.UserName;
-                _user.FullName = user.FullName;
-                _user.Title = user.Title;
-                _user.DOB = user.DOB;
-                _user.Email = user.Email;
-                _user.Admin = user.Admin;
-                _user.Locked = user.Locked;
-                if (user.Password != null)
-                {
-                    user.Password = _encryptHelper.MD5Encrypt(user.Password);
-                    _user.Password = user.Password;
-                    _user.ConfirmPassword = user.Password;
-                }
-                _context.Update(_user);
-                await _context.SaveChangesAsync();
-
-                value = user.UserId;
-            }
-            catch (Exception) { value = 0; }
-            return value;
         }
     }
 }

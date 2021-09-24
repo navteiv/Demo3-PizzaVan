@@ -1,37 +1,170 @@
+
 <div class="container-fluid">
-  <div class="card shadow mb-4">
-    <div class="card-header py-3">
-      <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
-    </div>
-    <div class="card-body">
-      <div class="table-responsive">
-        <table
-          class="table table-bordered"
-          id="dataTable"
-          width="100%"
-          cellspacing="0"
-        >
-          <thead>
-            <tr>
-              <th>Tên tài khoản</th>
-              <th>Họ tên</th>
-              <th>Email</th>
-              <th>Chức danh</th>
-              <th>Ngày sinh</th>
-              <th>Bị khóa</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Tiger Nixon</td>
-              <td>System Architect</td>
-              <td>Edinburgh</td>
-              <td>61</td>
-              <td>2011/04/25</td>
-              <td>$320,800</td>
-            </tr>
-          </tbody>
-        </table>
+  <button class="btn btn-primary" (click)="showModal()">Thêm/Sửa User</button>
+  <hr>
+  <kendo-grid
+    [data]="gridView"
+    [navigable]="true"
+    [sortable]="{
+      allowUnsort: false
+    }"
+    [sort]="sort"
+    (sortChange)="sortChange($event)"
+    [skip]='skip'
+    [pageable] = "{
+      buttonCount: buttonCount,
+      info: info,
+      type: 'numeric',
+      previousNext: previousNext,
+      position: 'bottom'
+    }"
+    [pageSize]='pageSize'
+    (pageChange)="pageChange($event)"
+  >
+    <ng-template kendoGridToolbarTemplate>
+      <button kendoGridPDFCommand icon="file-pdf" [primary]="true">Export to PDF</button>
+      <button type="button" kendoGridExcelCommand icon="file-excel" >
+        Export to Excel
+      </button>
+    </ng-template>
+    <kendo-grid-column field="userId" title="ID" [width]="50">
+    </kendo-grid-column>
+    <kendo-grid-column field="userName" title="Tài khoản" [width]="150">
+    </kendo-grid-column>
+    <kendo-grid-column field="fullName" title="Họ tên">
+    </kendo-grid-column>
+    <kendo-grid-column field="email" title="Email" [width]="400">
+    </kendo-grid-column>
+    <kendo-grid-column field="title" title="Chức danh" [width]="120">
+    </kendo-grid-column>
+    <kendo-grid-column field="locked" title="Đã khóa" [width]="120">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        <input type="checkbox" [checked]="dataItem.locked" disabled />
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-pdf
+    fileName="UserList.pdf"
+    [allPages]="true"
+    paperSize="A4"
+    [repeatHeaders]="true"
+    [landscape]="true"
+    >
+    <kendo-grid-pdf-margin
+      top="2cm"
+      left="1cm"
+      right="1cm"
+      bottom="2cm"
+    ></kendo-grid-pdf-margin>
+    <ng-template
+      kendoGridPDFTemplate
+      let-pageNum="pageNum"
+      let-totalPages="totalPages"
+      >
+      <div class="page-template">
+        <div class="header">
+          <div style="float: right">
+            Page {{ pageNum }} of {{ totalPages }}
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </kendo-grid-pdf>
+  <kendo-grid-excel fileName="UserList.xlsx" [fetchData]="allData"></kendo-grid-excel>
+  </kendo-grid>
+</div>
+
+<!-- Create New -->
+<div bsModal #addEditModal="bs-modal" class="modal fade" tabindex="-1"
+     role="dialog" aria-labelledby="dialog-sizes-name1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-sizes-name1" class="modal-title pull-left">Thêm/Sửa User</h4>
+        <button type="button" class="btn-close close pull-right" (click)="addEditModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="userForm" (ngSubmit)="submitForm()">
+          <div class="form-row">
+            <div class="form-group col-6">
+                <label class="control-label">Tên tài khoản</label>
+                <input type="text" formControlName="userName" #userName class="form-control" />
+                <small class="text-danger"
+                *ngIf="userForm.controls.userName?.hasError('required') && userForm.controls.userName?.touched"
+                >
+                Vui lòng nhập tên tài khoản
+                </small>
+            </div>
+            <div class="form-group col-6">
+              <label  class="control-label">Họ tên</label>
+              <input type="text" formControlName="fullName" class="form-control" />
+              <small class="text-danger"
+                *ngIf="userForm.controls.fullName?.hasError('required') && userForm.controls.fullName?.touched"
+                >
+                Vui lòng nhập họ tên
+                </small>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-6">
+                <label class="control-label">Email</label>
+                <input type="email" formControlName="email" class="form-control" />
+                <small class="text-danger"
+                *ngIf="userForm.controls.email?.hasError('required') && userForm.controls.email?.touched"
+                >
+                Vui lòng nhập email
+                </small>
+            </div>
+            <div class="form-group col-6">
+              <label  class="control-label">Chức danh</label>
+              <input type="text" formControlName="title" class="form-control" />
+              <small class="text-danger"
+                *ngIf="userForm.controls.title?.hasError('required') && userForm.controls.title?.touched"
+                >
+                Vui lòng nhập tên chức danh
+                </small>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-12">
+                <label class="control-label">Ngày sinh</label>
+                <input type="date" formControlName="dob" class="form-control" />
+                <small class="text-danger"
+                *ngIf="userForm.controls.dob?.hasError('required') && userForm.controls.dob?.touched"
+                >
+                Vui lòng nhập ngày sinh
+                </small>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-6">
+                <label class="control-label">Mật khẩu</label>
+                <input type="password" formControlName="password" class="form-control" />
+                <small class="text-danger"
+                *ngIf="userForm.controls.password?.hasError('required') && userForm.controls.password?.touched"
+                >
+                Vui lòng nhập mật khẩu
+                </small>
+            </div>
+            <div class="form-group col-6">
+              <label class="control-label">Xác nhận mật khẩu</label>
+              <input type="password" formControlName="confirmPassword" class="form-control" />
+              <small class="text-danger"
+                *ngIf="userForm.controls.confirmPassword?.hasError('required') && userForm.controls.confirmPassword?.touched"
+                >
+                Vui lòng xác nhận mật khẩu
+                </small>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-md-12">
+              <button class="btn btn-success" type="submit" [disabled]="!userForm.valid">Cập nhật</button> &nbsp;
+              <button class="btn btn-secondary" (click)="cancel()">Hủy bỏ</button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </div>

@@ -20,9 +20,11 @@ export class AuthenticateService {
     return this.http.post(SystemConstants.LOCAL_API + 'api/Token/login', {username: username, password: password}, {headers: headers})
     .subscribe(response => {
       const token = (<any>response).token;
+      const name = (<any>response).fullName
       console.log(token);
       localStorage.removeItem("jwt");
       localStorage.setItem("jwt", token);
+      localStorage.setItem("fullName", name);
       this.invalidLogin = false;
       this.router.navigate(["/main"]);
     }, err => {

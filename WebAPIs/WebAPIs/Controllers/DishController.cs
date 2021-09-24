@@ -19,9 +19,9 @@ namespace WebAPIs.Controllers
             _dishBUS = dishBUS;
         }
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Dish>>> GetDish()
+        public ActionResult<IEnumerable<Dish>> GetDish()
         {
-            return await _dishBUS.GetMonAnAllAsync();
+            return _dishBUS.GetAllDishes();
         }
     }
 }

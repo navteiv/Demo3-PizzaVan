@@ -9,7 +9,7 @@ import { AuthenticateService } from '../core/services/authenticate.service';
 export class MainComponent implements OnInit {
 
   constructor(private authen: AuthenticateService) { }
-
+  fullName = localStorage.getItem("fullName");
   ngOnInit(): void {
   }
   logOut(): void{

@@ -19,30 +19,35 @@ namespace WebAPIs.Controllers
         {
             _customerBUS = customerBUS;
         }
-        [HttpGet]
-        public async Task<ActionResult<Customer>> GetCustomer([FromQuery] int id)
+        [HttpGet("{id}")]
+        public  ActionResult<Customer> GetCustomer([FromQuery] int id)
         {
-            Customer customer = await _customerBUS.GetCustomerAsync(id);
+            Customer customer = _customerBUS.GetCustomer(id);
             return customer;
         }
+        [HttpGet]
+        public ActionResult<List<Customer>> GetCustomer()
+        {
+            var list = _customerBUS.GetAllCustomers();
+            return list;
+        }
         [HttpPost]
-        public async Task<ActionResult<int>> PostCustomer(Customer customer)
+        public ActionResult<int> PostCustomer(Customer customer)
         {
             try
             {
-                int id = await _customerBUS.AddCustomerAsync(customer);
+                int id =  _customerBUS.AddCustomer(customer);
                 customer.CustomerId = id;
             }
             catch (Exception){}
             return Ok(1);
         }
-        [Authorize]
         [HttpPut("{id}")]
-        public async Task<ActionResult<int>> EditCustomer(int id, Customer customer)
+        public ActionResult<int> EditCustomer(int id, Customer customer)
         {
             try
             {
-                await _customerBUS.EditCustomerAsync(id, customer);
+                 _customerBUS.EditCustomer(id, customer);
             }
             catch (Exception)
             {

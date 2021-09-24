@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { MainComponent } from './main.component';
-
+import { GridModule } from '@progress/kendo-angular-grid';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 const mainRoutes: Routes = [
   {
     path: '', component: MainComponent, children: [
@@ -20,7 +21,7 @@ const mainRoutes: Routes = [
   declarations: [],
   imports: [
     CommonModule,
-    RouterModule.forChild(mainRoutes)
+    RouterModule.forChild(mainRoutes),
   ]
 })
 export class MainModule { }
