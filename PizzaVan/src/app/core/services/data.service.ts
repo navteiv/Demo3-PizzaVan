@@ -33,15 +33,23 @@ export class DataService {
     .pipe(map((response: any) => response));
   }
   put(uri: string, data?: any) {
-    this.headers.delete("Authorization");
-    this.headers.append("Authorization", "Bearer" + localStorage.getItem("jwt"));
-    return this.http.put(SystemConstants.LOCAL_API + uri, data, {headers: this.headers})
+    // this.headers.delete("Authorization");
+    // this.headers.append("Authorization", "Bearer" + localStorage.getItem("jwt"));
+    const httpOptions = {
+      authorization: new HttpHeaders({'Authorization' : 'Bearer' + localStorage.getItem("jwt")}),
+      headers: new HttpHeaders({'Content-Type': 'application/json'})
+    }
+    return this.http.put(SystemConstants.LOCAL_API + uri, data, httpOptions)
     .pipe(map((response: any) => response));
   }
-  delete(uri: string, key: string, id: number) {
-    this.headers.delete("Authorization");
-    this.headers.append("Authorization", "Bearer" + localStorage.getItem("jwt"));
-    return this.http.delete(SystemConstants.LOCAL_API + uri + "/?" + key + "=" + id, {headers: this.headers})
+  delete(uri: string) {
+    // this.headers.delete("Authorization");
+    // this.headers.append("Authorization", "Bearer" + localStorage.getItem("jwt"));
+    const httpOptions = {
+      authorization: new HttpHeaders({'Authorization' : 'Bearer' + localStorage.getItem("jwt")}),
+      headers: new HttpHeaders({'Content-Type': 'application/json'})
+    }
+    return this.http.delete(SystemConstants.LOCAL_API + uri, httpOptions)
     .pipe(map((response: any) => response));
   }
   public handleError(error: any){

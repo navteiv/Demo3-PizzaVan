@@ -33,7 +33,7 @@ namespace DataAccess.Models
         [Display(Name = "Ngày sinh")]
         [Column(TypeName = "date")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy/MM/dd}", ApplyFormatInEditMode = true)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
         public DateTime? DOB { get; set; }
 
         [Display(Name = "Quản trị")]

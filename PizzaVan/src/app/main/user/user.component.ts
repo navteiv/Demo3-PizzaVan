@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ExcelExportData } from '@progress/kendo-angular-excel-export';
-import { GridDataResult, PageChangeEvent } from '@progress/kendo-angular-grid';
+import { GridDataResult, PageChangeEvent, slice } from '@progress/kendo-angular-grid';
 import { orderBy, SortDescriptor } from '@progress/kendo-data-query';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { DataService } from 'src/app/core/services/data.service';
@@ -12,8 +12,11 @@ import { DataService } from 'src/app/core/services/data.service';
   styleUrls: ['./user.component.css']
 })
 export class UserComponent implements OnInit {
-  @ViewChild('addEditModal') public addEditModal!: ModalDirective
+  @ViewChild('addModal') public addModal!: ModalDirective
+  @ViewChild('editModal') public editModal!: ModalDirective
+  @ViewChild('deleteModal') public deleteModal!: ModalDirective
   userForm!: FormGroup;
+  currentId!: number;
 
   public pageSize = 5;
   public skip = 0;
@@ -45,13 +48,12 @@ export class UserComponent implements OnInit {
       email: ['', Validators.required],
       title: ['', Validators.required],
       dob: ['', Validators.required],
-      password: ['', Validators.required],
-      confirmPassword: ['', Validators.required]
+      password: [''],
+      confirmPassword: ['']
     });
   }
   public gridData!: any[];
   ngOnInit(): void {
-
     this.loadData();
     this.allData = this.allData.bind(this);
   }
@@ -67,21 +69,58 @@ export class UserComponent implements OnInit {
     )
   }
   showModal(): void {
-    this.addEditModal.show();
+    this.userForm.reset();
+    this.addModal.show();
   }
-  submitForm(): void{
+  submitForm(){
     console.log(this.userForm.value);
     console.log(JSON.stringify(this.userForm.value));
     this.dataService.post('api/User',JSON.stringify(this.userForm.value))
     .subscribe((response: any) => {
       console.log(response);
       this.loadData();
-      this.addEditModal.hide();
+      this.addModal.hide();
+    }, err => this.dataService.handleError(err));
+  }
+  showEditModal(id: any): void {
+    this.loadUser(id);
+    this.editModal.show();
+  }
+  loadUser(id: any){
+    this.dataService.get('api/User/' + id + "?id=" + id).subscribe((response: any) => {
+      this.userForm.controls['userName'].setValue(response.userName);
+      this.userForm.controls['fullName'].setValue(response.fullName);
+      this.userForm.controls['email'].setValue(response.email);
+      this.userForm.controls['title'].setValue(response.title);
+      this.userForm.controls['dob'].setValue(response.dob.slice(0,10));
+    });
+    this.currentId = id;
+  }
+  submitEditForm(){
+    this.dataService.put('api/User/' + this.currentId,JSON.stringify(this.userForm.value))
+    .subscribe((response: any) => {
+      console.log(response);
+      this.loadData();
+      this.editModal.hide();
     }, err => this.dataService.handleError(err));
   }
   cancel(): void{
-    this.addEditModal.hide();
+    this.addModal.hide();
+    this.editModal.hide();
+    this.deleteModal.hide();
     this.userForm.reset();
+  }
+
+  showDeleteDialog(id: any): void{
+    this.deleteModal.show();
+    this.currentId = id;
+  }
+  Delete(){
+    this.dataService.delete('api/User/'+this.currentId)
+    .subscribe((response: any) => {
+      this.loadData();
+      this.deleteModal.hide();
+    }, err => this.dataService.handleError(err));
   }
   public pageChange({skip, take}: PageChangeEvent): void {
     this.skip = skip;

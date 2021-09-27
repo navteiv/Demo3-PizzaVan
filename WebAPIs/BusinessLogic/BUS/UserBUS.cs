@@ -16,6 +16,7 @@ namespace BusinessLogic.BUS
         User GetUser(int id);
         int AddUser(User user);
         int EditUser(int id, User user);
+        int DeleteUser(int id);
         User Login(ViewLogin viewLogin);
     }
     public class UserBUS : IUserBUS
@@ -68,6 +69,10 @@ namespace BusinessLogic.BUS
                 _user.Email = user.Email;
                 _user.Admin = user.Admin;
                 _user.Locked = user.Locked;
+                if (string.IsNullOrEmpty(user.Password))
+                {   
+                    _user.Password = _user.Password;
+                }
                 if (user.Password != null)
                 {
                     user.Password = _encryptHelper.MD5Encrypt(user.Password);
@@ -89,6 +94,22 @@ namespace BusinessLogic.BUS
                      p.Password.Equals(_encryptHelper.MD5Encrypt(viewLogin.Password)))
                 .FirstOrDefault();
             return u;
+        }
+
+        public int DeleteUser(int id)
+        {
+            int value = 0;
+            try
+            {
+                var _user = _context.Users.Find(id);
+                _context.Users.Remove(_user);
+                _context.SaveChanges();
+                value = _user.UserId;
+            }
+            catch (Exception){
+                value = 0;
+            }
+            return value;
         }
     }
 }

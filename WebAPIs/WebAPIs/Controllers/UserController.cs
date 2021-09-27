@@ -35,6 +35,12 @@ namespace WebAPIs.Controllers
             var user =  _userBUS.GetAllUsers();
             return user;
         }
+        [HttpGet("{id}")]
+        public ActionResult<User> GetUser([FromQuery] int id)
+        {
+            User user = _userBUS.GetUser(id);
+            return user;
+        }
         [HttpPost]
         public ActionResult<int> PostUser(User user)
         {
@@ -44,6 +50,33 @@ namespace WebAPIs.Controllers
                 user.UserId = id;
             }
             catch (Exception){}
+            return Ok(1);
+        }
+        [HttpPut("{id}")]
+        public ActionResult<int> PutUser(int id, User user)
+        {
+            try
+            {
+                _userBUS.EditUser(id, user);
+            }
+            catch (Exception)
+            {
+
+                return BadRequest();
+            }
+            return Ok(1);
+        }
+        [HttpDelete("{id}")]
+        public ActionResult<int> DeleteUser(int id)
+        {
+            try
+            {
+                _userBUS.DeleteUser(id);
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
             return Ok(1);
         }
     }

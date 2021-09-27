@@ -1,6 +1,6 @@
 
 <div class="container-fluid">
-  <button class="btn btn-primary" (click)="showModal()">Thêm/Sửa User</button>
+  <button class="btn btn-primary" (click)="showModal()">Thêm User</button>
   <hr>
   <kendo-grid
     [data]="gridView"
@@ -42,6 +42,12 @@
         <input type="checkbox" [checked]="dataItem.locked" disabled />
       </ng-template>
     </kendo-grid-column>
+    <kendo-grid-column field="userId" title="" [width]="150" [sortable]="false">
+      <ng-template kendoGridCellTemplate let-Id >
+        <button class="btn btn-primary" (click)="showEditModal(Id.userId)">Sửa</button> &nbsp;
+        <button class="btn btn-danger" (click)="showDeleteDialog(Id.userId)">Xóa</button>
+      </ng-template>
+    </kendo-grid-column>
     <kendo-grid-pdf
     fileName="UserList.pdf"
     [allPages]="true"
@@ -74,18 +80,18 @@
 </div>
 
 <!-- Create New -->
-<div bsModal #addEditModal="bs-modal" class="modal fade" tabindex="-1"
+<div bsModal #addModal="bs-modal" class="modal fade" tabindex="-1"
      role="dialog" aria-labelledby="dialog-sizes-name1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 id="dialog-sizes-name1" class="modal-title pull-left">Thêm/Sửa User</h4>
-        <button type="button" class="btn-close close pull-right" (click)="addEditModal.hide()" aria-label="Close">
+        <h4 id="dialog-sizes-name1" class="modal-title pull-left">Thêm User</h4>
+        <button type="button" class="btn-close close pull-right" (click)="addModal.hide()" aria-label="Close">
           <span aria-hidden="true" class="visually-hidden">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <form [formGroup]="userForm" (ngSubmit)="submitForm()">
+        <form [formGroup]="userForm" (ngSubmit)="submitForm()" *ngIf="userForm">
           <div class="form-row">
             <div class="form-group col-6">
                 <label class="control-label">Tên tài khoản</label>
@@ -160,11 +166,107 @@
           </div>
           <div class="form-row">
             <div class="col-md-12">
+              <button class="btn btn-success" type="submit" [disabled]="!userForm.valid">Thêm</button> &nbsp;
+              <button class="btn btn-secondary" (click)="cancel()">Hủy bỏ</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit User -->
+<div bsModal #editModal="bs-modal" class="modal fade" tabindex="-1"
+     role="dialog" aria-labelledby="dialog-sizes-name1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-sizes-name1" class="modal-title pull-left">Sửa User</h4>
+        <button type="button" class="btn-close close pull-right" (click)="editModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="userForm" (ngSubmit)="submitEditForm()" *ngIf="userForm">
+          <div class="form-row">
+            <div class="form-group col-6">
+                <label class="control-label">Tên tài khoản</label>
+                <input type="text" formControlName="userName" #userName class="form-control" />
+                <small class="text-danger"
+                *ngIf="userForm.controls.userName?.hasError('required') && userForm.controls.userName?.touched"
+                >
+                Vui lòng nhập tên tài khoản
+                </small>
+            </div>
+            <div class="form-group col-6">
+              <label  class="control-label">Họ tên</label>
+              <input type="text" formControlName="fullName" class="form-control" />
+              <small class="text-danger"
+                *ngIf="userForm.controls.fullName?.hasError('required') && userForm.controls.fullName?.touched"
+                >
+                Vui lòng nhập họ tên
+                </small>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-6">
+                <label class="control-label">Email</label>
+                <input type="email" formControlName="email" class="form-control" />
+                <small class="text-danger"
+                *ngIf="userForm.controls.email?.hasError('required') && userForm.controls.email?.touched"
+                >
+                Vui lòng nhập email
+                </small>
+            </div>
+            <div class="form-group col-6">
+              <label  class="control-label">Chức danh</label>
+              <input type="text" formControlName="title" class="form-control" />
+              <small class="text-danger"
+                *ngIf="userForm.controls.title?.hasError('required') && userForm.controls.title?.touched"
+                >
+                Vui lòng nhập tên chức danh
+                </small>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-12">
+                <label class="control-label">Ngày sinh</label>
+                <input type="date" formControlName="dob" class="form-control" />
+                <small class="text-danger"
+                *ngIf="userForm.controls.dob?.hasError('required') && userForm.controls.dob?.touched"
+                >
+                Vui lòng nhập ngày sinh
+                </small>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="col-md-12">
               <button class="btn btn-success" type="submit" [disabled]="!userForm.valid">Cập nhật</button> &nbsp;
               <button class="btn btn-secondary" (click)="cancel()">Hủy bỏ</button>
             </div>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div bsModal #deleteModal="bs-modal" class="modal fade" tabindex="-1"
+role="dialog" aria-labelledby="dialog-sizes-name1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-sizes-name1" class="modal-title pull-left">Xác nhận</h4>
+        <button type="button" class="btn-close close pull-right" (click)="deleteModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">Bạn có muốn xóa bản ghi này không?</div>
+      <div class="modal-footer text-center">
+        <button class="btn btn-danger" type="button" (click)="Delete()" >Xóa</button>
+        <button class="btn btn-secondary" (click)="cancel()">Hủy</button>
       </div>
     </div>
   </div>
