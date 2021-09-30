@@ -80,6 +80,7 @@ export class UserComponent implements OnInit {
       console.log(response);
       this.loadData();
       this.addModal.hide();
+      alert("Thêm thành công");
     }, err => this.dataService.handleError(err));
   }
   showEditModal(id: any): void {
@@ -102,6 +103,7 @@ export class UserComponent implements OnInit {
       console.log(response);
       this.loadData();
       this.editModal.hide();
+      alert("Cập nhật thành công")
     }, err => this.dataService.handleError(err));
   }
   cancel(): void{

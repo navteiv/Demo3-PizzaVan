@@ -31,6 +31,9 @@
     <kendo-grid-column field="fullName" title="Họ tên">
     </kendo-grid-column>
     <kendo-grid-column field="doB" title="Ngày sinh" [width]="200">
+      <ng-template kendoGridCellTemplate let-item>
+        {{item.doB | date:'dd/MM/yyyy'}}
+      </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="address" title="Địa chỉ" [width]="400">
     </kendo-grid-column>

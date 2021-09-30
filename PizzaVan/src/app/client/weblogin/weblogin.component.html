@@ -1,0 +1,26 @@
+<br> <br>
+<div class="row mt-5">
+  <div class="col-sm-9 col-md-7 col-lg-5 m-auto">
+      <div class="card card-signin my-5">
+          <div class="card-body">
+              <h5 class="card-title text-center font-weight-bold">Đăng Nhập Website</h5>
+              <form class="form-signin" [formGroup]="webLoginForm" (ngSubmit)="onSubmit()">
+                  <input type="hidden" />
+                  <div class="form-label-group">
+                      <input formControlName="email" id="inputEmail" class="form-control pl-2" placeholder="Tên đăng nhập" required autofocus>
+                      <label  for="inputEmail" class="ml-2">Tên đăng nhập</label>
+                  </div>
+
+                  <div class="form-label-group">
+                      <input formControlName="password" type="password" id="inputPassword" class="form-control pl-2" placeholder="Mật khẩu" required>
+                      <label  for="inputPassword" class="ml-2">Mật khẩu</label>
+                  </div>
+
+                  <button class="btn btn-lg btn-dark btn-block text-uppercase">Đăng nhập</button>
+                  <hr class="my-4">
+
+              </form>
+          </div>
+      </div>
+  </div>
+</div>

@@ -1,5 +1,5 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient, HttpEventType, HttpHeaders } from '@angular/common/http';
+import { Injectable, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { SystemConstants } from '../common/constants';
 import { AuthenticateService } from './authenticate.service';
@@ -13,9 +13,7 @@ export class DataService {
   private headers!: HttpHeaders;
   constructor(private router: Router, private http: HttpClient, private authen: AuthenticateService) {
     this.headers = new HttpHeaders();
-    // this.headers.append('Content-Type', 'application/json');
   }
-
   get(uri: string) {
     this.headers.delete("Authorization");
     this.headers.append("Authorization", "Bearer" + localStorage.getItem("jwt"));

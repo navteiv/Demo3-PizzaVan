@@ -1,1 +1,81 @@
-<p>order works!</p>
+<div class="container-fluid">
+  <kendo-grid
+    [data]="gridView"
+    [navigable]="true"
+    [sortable]="{
+      allowUnsort: false
+    }"
+    [sort]="sort"
+    (sortChange)="sortChange($event)"
+    [skip]='skip'
+    [pageable] = "{
+      buttonCount: buttonCount,
+      info: info,
+      type: 'numeric',
+      previousNext: previousNext,
+      position: 'bottom'
+    }"
+    [pageSize]='pageSize'
+    (pageChange)="pageChange($event)"
+  >
+  <ng-template kendoGridToolbarTemplate>
+    <button kendoGridPDFCommand icon="file-pdf" [primary]="true">Export to PDF</button>
+    <button type="button" kendoGridExcelCommand icon="file-excel" >
+      Export to Excel
+    </button>
+  </ng-template>
+    <kendo-grid-column field="orderId" title="ID" [width]="50">
+    </kendo-grid-column>
+    <kendo-grid-column field="orderDate" title="Ngày đặt" [width]="200">
+      <ng-template kendoGridCellTemplate let-item>
+        {{item.orderDate | date:'dd/MM/yyyy'}}
+      </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="total" title="Tổng tiền">
+    </kendo-grid-column>
+    <kendo-grid-column field="orderStatus" title="Trạng thái" [width]="200">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        <div [ngSwitch]="dataItem.orderStatus">
+            <div *ngSwitchCase="1">Mới đặt</div>
+            <div *ngSwitchCase="2">Đang giao</div>
+            <div *ngSwitchCase="3">Đã giao</div>
+        </div>
+    </ng-template>
+    </kendo-grid-column>
+    <kendo-grid-column field="notes" title="Ghi chú" [width]="400">
+    </kendo-grid-column>
+    <!-- <kendo-grid-column field="locked" title="Đã khóa" [width]="120">
+      <ng-template kendoGridCellTemplate let-dataItem>
+        <input type="checkbox" [checked]="dataItem.locked" disabled />
+      </ng-template>
+    </kendo-grid-column> -->
+    <kendo-grid-pdf
+    fileName="OrderList.pdf"
+    [allPages]="true"
+    paperSize="A4"
+    [repeatHeaders]="true"
+    [landscape]="true"
+    >
+    <kendo-grid-pdf-margin
+      top="2cm"
+      left="1cm"
+      right="1cm"
+      bottom="2cm"
+    ></kendo-grid-pdf-margin>
+    <ng-template
+      kendoGridPDFTemplate
+      let-pageNum="pageNum"
+      let-totalPages="totalPages"
+      >
+      <div class="page-template">
+        <div class="header">
+          <div style="float: right">
+            Page {{ pageNum }} of {{ totalPages }}
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </kendo-grid-pdf>
+  <kendo-grid-excel fileName="OrderList.xlsx" [fetchData]="allData"></kendo-grid-excel>
+</kendo-grid>
+</div>

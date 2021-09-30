@@ -31,6 +31,7 @@ export class CustomerComponent implements OnInit {
   public sortChange(sort: SortDescriptor[]): void {
     this.sort = sort;
     this.loadData();
+
   }
   constructor(private dataService: DataService) { }
 

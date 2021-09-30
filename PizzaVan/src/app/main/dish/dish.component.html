@@ -1,4 +1,5 @@
 <div class="container-fluid">
+  <button class="btn btn-primary mb-2" (click)="showModal()">Thêm Món Ăn</button>
   <kendo-grid
       [data]="gridView"
       [sortable]="{
@@ -63,7 +64,7 @@
     <kendo-grid-column field="image" title="Hình ảnh" [width]="220" [filterable]="false">
       <ng-template kendoGridCellTemplate let-dataItem>
 
-        <img src="../../../assets{{dataItem.image}}" [height]="100">
+        <img src="{{imagePath + dataItem.image}}" [height]="100">
       </ng-template>
     </kendo-grid-column>
     <kendo-grid-column field="description" title="Mô tả">
@@ -103,5 +104,86 @@
       </kendo-grid-pdf>
       <kendo-grid-excel fileName="DishesList.xlsx" [fetchData]="allData"></kendo-grid-excel>
   </kendo-grid>
+  <!-- enctype="multipart/form-data" -->
+</div>
+<div bsModal #addModal="bs-modal" class="modal fade" tabindex="-1"
+     role="dialog" aria-labelledby="dialog-sizes-name1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-sizes-name1" class="modal-title pull-left">Thêm Món Ăn</h4>
+        <button type="button" class="btn-close close pull-right" (click)="addModal.hide()" aria-label="Close">
+          <span aria-hidden="true" class="visually-hidden">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="dishForm" (ngSubmit)="submitForm()" *ngIf="dishForm" enctype="multipart/form-data">
+          <div class="form-row">
+            <div class="form-group col-6">
+                <label class="control-label">Tên món</label>
+                <input type="text" formControlName="name" #name class="form-control" />
+                <small class="text-danger"
+                *ngIf="dishForm.controls.name?.hasError('required') && dishForm.controls.name?.touched"
+                >
+                Vui lòng nhập tên món
+                </small>
+            </div>
+            <div class="form-group col-6">
+              <label  class="control-label">Giá thành</label>
+              <input type="number" formControlName="price" class="form-control" />
+              <small class="text-danger"
+                *ngIf="dishForm.controls.price?.hasError('required') && dishForm.controls.price?.touched"
+                >
+                Vui lòng nhập giá thành
+                </small>
+            </div>
+          </div>
 
+          <div class="form-row">
+            <div class="form-group col-6">
+                <label class="control-label">Phân loại</label>
+                <select formControlName="category" class="form-control">
+                  <option [ngValue]=1>Món ăn</option>
+                  <option [ngValue]=2>Combo</option>
+                  <option [ngValue]=3>Nước uống</option>
+                </select>
+                <small class="text-danger"
+                *ngIf="dishForm.controls.category?.hasError('required') && dishForm.controls.category?.touched"
+                >
+                Vui lòng chọn loại
+                </small>
+            </div>
+            <div class="form-group col-6">
+              <label class="control-label">Trạng thái</label>
+              <select formControlName="status" class="form-control">
+                <option [ngValue]="true">Còn hàng</option>
+                <option [ngValue]="false">Hết hàng</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-12">
+              <label  class="control-label">Hình ảnh</label>
+              <!-- (change)="uploadFile(file.files)" -->
+              <input formControlName="image" class="form-control" (change)="uploadFile(file.files)" #file type="file"/>
+              <!-- <button type="button" class="btn btn-success" (click)="file.click()">Upload File</button> -->
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-12">
+                <label class="control-label">Mô tả</label>
+                <textarea formControlName="description" id="" class="form-control" cols="100" rows="3"></textarea>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="col-md-12">
+              <button class="btn btn-success" type="submit" [disabled]="!dishForm.valid">Thêm</button> &nbsp;
+              <button class="btn btn-secondary" (click)="cancel()">Hủy bỏ</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>

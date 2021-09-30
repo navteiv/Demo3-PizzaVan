@@ -1,0 +1,89 @@
+<style>
+  .navbar {
+  overflow: hidden;
+  background-color: #333;
+  font-weight: bold;
+  position: fixed; /* Set the navbar to fixed position */
+  top: 0; /* Position the navbar at the top of the page */
+  width: 100%; /* Full width */
+  font-family:monospace;
+  z-index: 2;
+}
+.navbar a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  text-decoration: none;
+}
+
+/* Change background on mouse-over */
+.nav-link:hover {
+  background: red;
+  color: black;
+}
+
+/* Main content */
+.main {
+  margin-top: 30px; /* Add a top margin to avoid content overlay */
+}
+</style>
+
+<header class="">
+  <nav class="navbar navbar-expand-lg">
+      <div class="container">
+          <a class="navbar-brand mt-2"><h2>PIZZA<b style="color: red;">VAN</b></h2></a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarResponsive">
+              <ul class="navbar-nav mr-auto">
+                  <li class="nav-item">
+                      <a class="nav-link" href="client">
+                          Trang Chủ
+                          <span class="sr-only">(current)</span>
+                      </a>
+                  </li>
+              </ul>
+              <div *ngIf="!checkAuthen; then notAuthen else authen"></div>
+                  <ng-template #notAuthen>
+                    <ul class="navbar-nav ml-auto" >
+                      <li class="nav-item">
+                        <a href="" class="nav-link" data-toggle="modal" data-target=".bd-example-modal-lg">
+                          Giỏ hàng <span *ngIf="count">({{count}})</span>|
+                        </a>
+                        <!-- <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Large modal</button> -->
+
+                        <a href="client/login" class="nav-link">
+                          Đăng nhập
+                        </a>
+                      </li>
+                    </ul>
+                  </ng-template>
+                  <ng-template #authen>
+                    <ul class="navbar-nav ml-auto" >
+                      <li class="nav-item">
+                        <a href="" class="nav-link" data-toggle="modal" data-target=".bd-example-modal-lg">
+                          Giỏ hàng <span *ngIf="count">({{count}})</span>|
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a href="client" class="nav-link">
+                          Xin chào {{fullName}} |
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a (click)="logOut()" href="client" class="nav-link">
+                          Đăng xuất
+                        </a>
+                      </li>
+                    </ul>
+                  </ng-template>
+          </div>
+      </div>
+  </nav>
+</header>
+
+
+
+<router-outlet></router-outlet>
