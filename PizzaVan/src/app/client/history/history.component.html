@@ -1,0 +1,54 @@
+<br> <br> <br>
+<div class="latest-products mt-5">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <div class="section-heading h2">LỊCH SỬ ĐẶT HÀNG</div>
+          </div>
+          <table class="table">
+              <thead>
+                  <tr>
+                      <th>
+                          ID
+                      </th>
+                      <th>
+                          Ngày đặt
+                      </th>
+                      <th>
+                          Trạng thái đơn hàng
+                      </th>
+                      <th>
+                        Tổng tiền
+                      </th>
+                      <th>
+                          Ghi chú
+                      </th>
+                      <th></th>
+                  </tr>
+              </thead>
+              <tbody *ngFor="let order of orders">
+                      <tr>
+                          <td>
+                            {{order.orderId}}
+                          </td>
+                          <td>
+                            {{order.orderDate |  date:'dd/MM/yyyy'}}
+                          </td>
+                          <td [ngSwitch]="order.orderStatus">
+                            <div *ngSwitchCase="1">Mới đặt</div>
+                            <div *ngSwitchCase="2">Đang giao</div>
+                            <div *ngSwitchCase="3">Đã giao</div>
+                          </td>
+                          <td>
+                            {{order.total}}
+                          </td>
+                          <td>
+                            {{order.notes}}
+                          </td>
+                          <td></td>
+                      </tr>
+              </tbody>
+          </table>
+      </div>
+  </div>
+</div>

@@ -3,6 +3,7 @@ import { SystemConstants } from 'src/app/core/common/constants';
 import { DataService } from 'src/app/core/services/data.service';
 import { Cart, Item } from '../viewCart';
 import { ModalDirective } from 'ngx-bootstrap/modal';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-index',
@@ -10,7 +11,7 @@ import { ModalDirective } from 'ngx-bootstrap/modal';
   styleUrls: ['./index.component.css', '../../../assets/css/templatemo-sixteen.css', '../../../assets/css/owl.css','../../../assets/css/cart.css']
 })
 export class IndexComponent implements OnInit {
-  @ViewChild('addModal') public addModal!: ModalDirective
+  @ViewChild('cartModal') public cartModal!: ModalDirective
 
   public Cart!: Cart;
   public Item!: Item;
@@ -18,9 +19,12 @@ export class IndexComponent implements OnInit {
   public p: number = 1;
   public sum: number = 0;
   public products!: any[];
+  public localCart = localStorage.getItem("localCart");
+  constructor(private dataService: DataService, private router: Router) {
+    if(this.localCart == null){
+      localStorage.setItem("localCart", JSON.stringify(this.cartItems));
+    }
 
-  constructor(private dataService: DataService) {
-    localStorage.setItem("localCart", JSON.stringify(this.cartItems));
   }
   ngOnInit(): void {
     this.loadData();
@@ -40,26 +44,29 @@ export class IndexComponent implements OnInit {
     this.dataService.get('api/Dish').subscribe(
       (response: any) => {
         this.products = response;
-        console.log(this.products);
       }
     )
   }
   public cartItems?: any = [];
   checkOut(): void{
-    this.Cart = {
-      CusId: parseInt(localStorage.getItem("cusId")!),
-      ListViewCart: this.cartItems,
-      TotalPrice: this.sum
+    if(this.cartItems.length>0){
+      this.Cart = {
+        CusId: parseInt(localStorage.getItem("cusId")!),
+        ListViewCart: this.cartItems,
+        TotalPrice: this.sum
+      }
+      if(localStorage.getItem("jwt")){
+        this.dataService.post('api/Cart', JSON.stringify(this.Cart))
+        .subscribe((response: any) => {
+          window.location.href = '/client/history'
+          localStorage.removeItem("localCart");
+          localStorage.removeItem("countCartItem");
+        })
+      }
+      else{ alert("Vui lòng đăng nhập")}
+    }else{
+      alert("Vui lòng chọn hàng");
     }
-    if(localStorage.getItem("jwt")){
-      this.dataService.post('api/Cart', JSON.stringify(this.Cart))
-      .subscribe((response: any) => {
-        console.log(response);
-        localStorage.removeItem("localCart");
-        localStorage.removeItem("countCartItem");
-      })
-    }
-    else{ alert("Vui lòng đăng nhập")}
   }
   addToCart(prod: any): void{
     this.Item = {
@@ -69,7 +76,6 @@ export class IndexComponent implements OnInit {
     }
     console.log(this.Item);
     let cartData = localStorage.getItem("localCart");
-    console.log(cartData);
     if(cartData == null){
       let storeDataCart: any = [];
       storeDataCart.push(this.Item);
@@ -88,7 +94,7 @@ export class IndexComponent implements OnInit {
     localStorage.setItem("countCartItem", JSON.stringify(this.cartItems.length));
   }
   showModal(): void{
-    this.addModal.show();
+    this.cartModal.show();
 
   }
 }

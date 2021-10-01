@@ -4,17 +4,21 @@ using DataAccess.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -77,8 +81,12 @@ namespace WebAPIs
             services.AddTransient<IUploadHelper, UploadHelper>();
             services.AddTransient<IEncryptHelper, EncryptHelper>();
             services.AddTransient<IUserBUS, UserBUS>();
-            services.AddTransient<ICustomerBUS, CustomerBUS>();
             services.AddTransient<IDishBUS, DishBUS>();
+            services.AddTransient<IOrderBUS, OrderBUS>();
+            services.AddTransient<IOrderDetailBUS, OrderDetailBUS>();
+            services.AddTransient<ICustomerBUS, CustomerBUS>();
+
+
             services.AddCors(options => options.AddPolicy(
                  "_mypolicy", builder => builder
                  .AllowAnyOrigin()
@@ -86,6 +94,12 @@ namespace WebAPIs
                  .AllowAnyHeader()
              )
               );
+            services.Configure<FormOptions>(o =>
+            {
+                o.ValueLengthLimit = int.MaxValue;
+                o.MultipartBodyLengthLimit = int.MaxValue;
+                o.MemoryBufferThreshold = int.MaxValue;
+            });
 
         }
 
@@ -98,11 +112,17 @@ namespace WebAPIs
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
-
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();
             app.UseCors("_mypolicy");
+            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"Image")),
+                RequestPath = new PathString("/Image")
+            }); ;
 
             app.UseAuthentication();
             app.UseAuthorization();
